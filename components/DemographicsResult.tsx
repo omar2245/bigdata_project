@@ -1,11 +1,13 @@
 import React from 'react';
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, CircularProgress } from '@mui/material';
 import { PopulateFormValues } from '@/type/type';
 import HouseholdChart from './HouseholdChart';
 import HouseholdPieChart from './HouseholdPieChart';
 
 interface Props {
   searchParams: PopulateFormValues;
+  isLoading: boolean;
+  error: boolean;
   cityData: any[];
 }
 
@@ -19,7 +21,7 @@ function ErrorText({ text }: { text: string }) {
   );
 }
 
-function DemographicsResult({ searchParams, cityData }: Props) {
+function DemographicsResult({ searchParams, isLoading, error = false, cityData }: Props) {
   const { year, city, district } = searchParams;
 
   const totalMaleOrdinary = cityData.reduce(
@@ -39,8 +41,8 @@ function DemographicsResult({ searchParams, cityData }: Props) {
     0,
   );
 
-  if (cityData.length === 0) {
-    return <ErrorText text="此城市或區不存在" />;
+  if (error) {
+    return <ErrorText text="發生錯誤，請確認輸入的地區是否有誤" />;
   }
 
   return (
@@ -49,18 +51,23 @@ function DemographicsResult({ searchParams, cityData }: Props) {
         {`${year}年 ${city} ${district}`}
       </Typography>
 
-      <HouseholdChart
-        totalMaleOrdinary={totalMaleOrdinary}
-        totalFemaleOrdinary={totalFemaleOrdinary}
-        totalMaleSingle={totalMaleSingle}
-        totalFemaleSingle={totalFemaleSingle}
-      />
-      <HouseholdPieChart
-        totalMaleOrdinary={totalMaleOrdinary}
-        totalFemaleOrdinary={totalFemaleOrdinary}
-        totalMaleSingle={totalMaleSingle}
-        totalFemaleSingle={totalFemaleSingle}
-      />
+      {isLoading && <CircularProgress />}
+      {!isLoading && cityData.length !== 0 && (
+        <div>
+          <HouseholdChart
+            totalMaleOrdinary={totalMaleOrdinary}
+            totalFemaleOrdinary={totalFemaleOrdinary}
+            totalMaleSingle={totalMaleSingle}
+            totalFemaleSingle={totalFemaleSingle}
+          />
+          <HouseholdPieChart
+            totalMaleOrdinary={totalMaleOrdinary}
+            totalFemaleOrdinary={totalFemaleOrdinary}
+            totalMaleSingle={totalMaleSingle}
+            totalFemaleSingle={totalFemaleSingle}
+          />
+        </div>
+      )}
     </Stack>
   );
 }
