@@ -1,13 +1,11 @@
 import React from 'react';
-import { Stack, Typography, CircularProgress } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { PopulateFormValues } from '@/type/type';
 import HouseholdChart from './HouseholdChart';
 import HouseholdPieChart from './HouseholdPieChart';
 
 interface Props {
   searchParams: PopulateFormValues;
-  isLoading: boolean;
-  error: boolean;
   cityData: any[];
 }
 
@@ -21,7 +19,7 @@ function ErrorText({ text }: { text: string }) {
   );
 }
 
-function DemographicsResult({ searchParams, isLoading, error = false, cityData }: Props) {
+function DemographicsResult({ searchParams, cityData }: Props) {
   const { year, city, district } = searchParams;
 
   const totalMaleOrdinary = cityData.reduce(
@@ -41,10 +39,7 @@ function DemographicsResult({ searchParams, isLoading, error = false, cityData }
     0,
   );
 
-  if (error) {
-    return <ErrorText text="發生錯誤，請稍後再試一次" />;
-  }
-  if (!isLoading && cityData.length === 0) {
+  if (cityData.length === 0) {
     return <ErrorText text="此城市或區不存在" />;
   }
 
@@ -54,23 +49,18 @@ function DemographicsResult({ searchParams, isLoading, error = false, cityData }
         {`${year}年 ${city} ${district}`}
       </Typography>
 
-      {isLoading && !error && <CircularProgress />}
-      {!isLoading && !error && (
-        <div>
-          <HouseholdChart
-            totalMaleOrdinary={totalMaleOrdinary}
-            totalFemaleOrdinary={totalFemaleOrdinary}
-            totalMaleSingle={totalMaleSingle}
-            totalFemaleSingle={totalFemaleSingle}
-          />
-          <HouseholdPieChart
-            totalMaleOrdinary={totalMaleOrdinary}
-            totalFemaleOrdinary={totalFemaleOrdinary}
-            totalMaleSingle={totalMaleSingle}
-            totalFemaleSingle={totalFemaleSingle}
-          />
-        </div>
-      )}
+      <HouseholdChart
+        totalMaleOrdinary={totalMaleOrdinary}
+        totalFemaleOrdinary={totalFemaleOrdinary}
+        totalMaleSingle={totalMaleSingle}
+        totalFemaleSingle={totalFemaleSingle}
+      />
+      <HouseholdPieChart
+        totalMaleOrdinary={totalMaleOrdinary}
+        totalFemaleOrdinary={totalFemaleOrdinary}
+        totalMaleSingle={totalMaleSingle}
+        totalFemaleSingle={totalFemaleSingle}
+      />
     </Stack>
   );
 }
