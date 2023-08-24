@@ -3,7 +3,7 @@
 import DemographicsForm from '@/components/DemographicsForm';
 import DemographicsResult from '@/components/DemographicsResult';
 import { PopulateFormValues } from '@/type/type';
-import { Stack } from '@mui/material';
+import { Stack, CircularProgress } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -17,7 +17,7 @@ function ResultPage() {
   const district = decodeURIComponent((params?.district as string) ?? '');
 
   const [cityData, setCityData] = useState([]);
-  const [error, setError] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -31,8 +31,9 @@ function ResultPage() {
         const site = `${city}${district}`;
         const filteredData = responseData.filter((d: { site_id: string }) => d.site_id === site);
         setCityData(filteredData);
-      } catch (err) {
-        setError(true);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -49,14 +50,14 @@ function ResultPage() {
   };
   return (
     <Stack pt={1} px={{ xs: 2, sm: 2, md: '149px' }}>
-      <DemographicsForm defaultFormValues={{ year, city, district }} onSubmit={onSubmit} />
-
-      <DemographicsResult
-        cityData={cityData}
-        searchParams={{ year, city, district }}
-        isLoading={isLoading}
-        error={error}
-      />
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <DemographicsForm defaultFormValues={{ year, city, district }} onSubmit={onSubmit} />
+          <DemographicsResult cityData={cityData} searchParams={{ year, city, district }} />
+        </>
+      )}
     </Stack>
   );
 }
