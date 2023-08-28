@@ -4,14 +4,26 @@ import { Chip, Divider, Stack, Typography } from '@mui/material';
 import { FormProps } from '@/type/type';
 import CitySelectForm from './CitySelectForm';
 
-function DemographicsForm({ defaultFormValues, onSubmit }: FormProps) {
+function DemographicsSearch({
+  formValues,
+  setFormValues,
+  inputValue,
+  setInputValue,
+  onSubmit,
+}: FormProps) {
   return (
     <Stack pt={3} spacing={6} alignItems="center">
       <Typography variant="h4" textAlign="center">
         人口數、戶數按戶別及性別統計
       </Typography>
 
-      <CitySelectForm defaultFormValues={defaultFormValues} onSubmit={onSubmit} />
+      <CitySelectForm
+        formValues={formValues}
+        setFormValues={setFormValues}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        onSubmit={onSubmit}
+      />
 
       <Divider
         flexItem
@@ -26,4 +38,4 @@ function DemographicsForm({ defaultFormValues, onSubmit }: FormProps) {
   );
 }
 
-export default DemographicsForm;
+export default DemographicsSearch;

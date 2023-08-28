@@ -30,6 +30,8 @@ function AutoComplete({
       inputValue={inputValue}
       onChange={onChange}
       onInputChange={onInputChange}
+      isOptionEqualToValue={(option, v) => option === v}
+      disabled={disabled}
       renderInput={(params) => (
         <TextField
           {...params}

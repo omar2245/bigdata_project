@@ -1,6 +1,8 @@
+import { TaiwanInfo } from '@/type/type';
+
 export const yearsMenu = ['110', '109', '108', '107', '106', '105', '104', '103'];
 
-export const taiwanCityInfo = [
+export const taiwanCityInfo: TaiwanInfo[] = [
   {
     name: '臺北市',
     district: [

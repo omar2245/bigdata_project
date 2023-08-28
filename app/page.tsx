@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Stack } from '@mui/material';
-
-import DemographicsForm from '@/components/DemographicsForm';
-import { PopulateFormValues } from '@/type/type';
 import { useRouter } from 'next/navigation';
+
+// eslint-disable-next-line import/no-named-as-default
+import DemographicsSearch from '@/components/DemographicsSearch';
+import { PopulateFormValues, PopulateInputValues } from '@/type/type';
 
 const defaultFormValues: PopulateFormValues = {
   year: '110',
@@ -15,15 +16,23 @@ const defaultFormValues: PopulateFormValues = {
 
 function Home() {
   const router = useRouter();
+  const [formValues, setFormValues] = useState<PopulateFormValues>(defaultFormValues);
+  const [inputValue, setInputValue] = useState<PopulateInputValues>({ city: '', district: '' });
 
-  const onSubmit = (formValues: PopulateFormValues) => {
-    const { year, city, district } = formValues;
+  const onSubmit = (values: PopulateFormValues) => {
+    const { year, city, district } = values;
     router.push(`/${year}/${city}/${district}`);
   };
 
   return (
     <Stack pt={1} px={{ xs: 2, sm: 2, md: '149px' }}>
-      <DemographicsForm defaultFormValues={defaultFormValues} onSubmit={onSubmit} />
+      <DemographicsSearch
+        formValues={formValues}
+        setFormValues={setFormValues}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        onSubmit={onSubmit}
+      />
     </Stack>
   );
 }
