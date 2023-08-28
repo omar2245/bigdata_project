@@ -1,20 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
-import { FormProps, PopulateFormValues } from '@/type/type';
+import React from 'react';
 import { Button, Stack } from '@mui/material';
+
+import { FormProps } from '@/type/type';
 import { taiwanCityInfo, yearsMenu } from '@/utils/menuItems';
 import Selector from './Selector';
 import AutoComplete from './AutoComplete';
 
-function CitySelectForm({ defaultFormValues, onSubmit }: FormProps) {
-  const { year, city, district } = defaultFormValues;
-  const [formValues, setFormValues] = useState<PopulateFormValues>(defaultFormValues);
-  const [inputValue, setInputValue] = useState({ city, district });
-
+function CitySelectForm({
+  formValues,
+  setFormValues,
+  inputValue,
+  setInputValue,
+  onSubmit,
+}: FormProps) {
   const citysMenu = taiwanCityInfo.map((item) => item.name);
 
-  const districtMenu = taiwanCityInfo.find((item) => item.name === formValues.city)?.district ?? [];
+  const districtMenu: string[] | undefined =
+    taiwanCityInfo.find((item) => item.name === formValues.city)?.district ?? [];
 
   return (
     <Stack
@@ -29,20 +33,12 @@ function CitySelectForm({ defaultFormValues, onSubmit }: FormProps) {
           items={yearsMenu}
           label="年份"
           name="year"
-          value={year}
+          value={formValues.year}
           handleChange={(e: any) => {
             setFormValues((prev) => ({ ...prev, year: e.target.value }));
           }}
         />
       </Stack>
-      {/* <Selector
-        items={citysMenu}
-        label="縣/市"
-        name="city"
-        value={city}
-        placeholder="請選擇 縣/市"
-        handleChange={handleChange}
-      /> */}
       <AutoComplete
         options={citysMenu}
         value={formValues.city}
@@ -61,13 +57,14 @@ function CitySelectForm({ defaultFormValues, onSubmit }: FormProps) {
         value={formValues.district}
         inputValue={inputValue.district}
         onChange={(event: any, newValue: string | null) => {
-          setFormValues((prev) => ({ ...prev, district: newValue ?? '' }));
+          setFormValues((prev) => ({ ...prev, district: newValue ?? '' ?? '' }));
         }}
         onInputChange={(event, newInputValue) => {
-          setInputValue((prev) => ({ ...prev, district: newInputValue ?? '' }));
+          setInputValue((prev) => ({ ...prev, district: newInputValue ?? '' ?? '' }));
         }}
         label="區"
         placeholder="請先選擇 縣/市"
+        disabled={formValues.city.length === 0}
       />
 
       <Button

@@ -1,13 +1,13 @@
 'use client';
 
-import DemographicsForm from '@/components/DemographicsForm';
+import DemographicsSearch from '@/components/DemographicsSearch';
 import DemographicsResult from '@/components/DemographicsResult';
-import { PopulateFormValues } from '@/type/type';
+import { PopulateFormValues, PopulateInputValues } from '@/type/type';
 import { Stack } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-const url = 'https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP019';
+const API_URL = 'https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP019';
 
 function ResultPage() {
   const params = useParams();
@@ -16,15 +16,17 @@ function ResultPage() {
   const city = decodeURIComponent((params?.city as string) ?? '');
   const district = decodeURIComponent((params?.district as string) ?? '');
 
+  const [formValues, setFormValues] = useState<PopulateFormValues>({ year, city, district });
+  const [inputValue, setInputValue] = useState<PopulateInputValues>({ city, district });
   const [cityData, setCityData] = useState([]);
-  const [error, setError] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`${url}/${year}`);
+        const res = await fetch(`${API_URL}/${year}`);
         const data = await res.json();
 
         const { responseData } = data;
@@ -32,7 +34,7 @@ function ResultPage() {
         const filteredData = responseData.filter((d: { site_id: string }) => d.site_id === site);
         setCityData(filteredData);
       } catch (err) {
-        setError(true);
+        setHasError(true);
       } finally {
         setIsLoading(false);
       }
@@ -43,19 +45,25 @@ function ResultPage() {
     }
   }, [city, district, year]);
 
-  const onSubmit = (formValues: PopulateFormValues) => {
-    const { year: newYear, city: newCity, district: newDistrict } = formValues;
+  const onSubmit = (values: PopulateFormValues) => {
+    const { year: newYear, city: newCity, district: newDistrict } = values;
     router.push(`/${newYear}/${newCity}/${newDistrict}`);
   };
   return (
     <Stack pt={1} px={{ xs: 2, sm: 2, md: '149px' }}>
-      <DemographicsForm defaultFormValues={{ year, city, district }} onSubmit={onSubmit} />
+      <DemographicsSearch
+        formValues={formValues}
+        setFormValues={setFormValues}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        onSubmit={onSubmit}
+      />
 
       <DemographicsResult
         cityData={cityData}
         searchParams={{ year, city, district }}
         isLoading={isLoading}
-        error={error}
+        error={hasError}
       />
     </Stack>
   );
